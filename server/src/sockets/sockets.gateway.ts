@@ -1,5 +1,5 @@
 import { WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
-import { appConfig } from 'config';
+import { appConfig } from '../config';
 import { SOCKET_EVENTS } from '../consts';
 import { Starship } from '../data/data.service';
 

@@ -33,11 +33,11 @@ export class DataService {
     this.starships = starships;
   }
 
-  getStarships() {
-    return this.starships;
+  getStarships(): Starship[] {
+    return Object.values(this.starships);
   }
 
-  getStarship(id: string) {
+  getStarship(id: string): Starship {
     return this.starships[id];
   }
 

@@ -13,13 +13,13 @@ import {
   Payload,
   Transport,
 } from '@nestjs/microservices';
-import { KAFKA_EVENTS, NAME_SERVICE_STARSHIP } from 'src/consts';
+import { KAFKA_EVENTS, NAME_SERVICE_STARSHIP } from '../consts';
 import {
   ComponentStatus,
   DataService,
   Starship,
   StarshipComponent,
-} from 'src/data/data.service';
+} from '../data/data.service';
 import { SocketsGateway } from '../sockets/sockets.gateway';
 import { IncomingMessage } from '../types';
 
@@ -43,7 +43,7 @@ export class AppController {
 
   @Get('starships')
   getStarships(): Starship[] {
-    return Object.values(this.dataService.getStarships());
+    return this.dataService.getStarships();
   }
 
   @Delete('starships/:id')

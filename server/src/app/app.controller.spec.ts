@@ -1,21 +1,24 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test } from '@nestjs/testing';
+import { DataModule } from '../data/data.module';
+import { SocketsModule } from '../sockets/sockets.module';
 import { AppController } from './app.controller';
-import { AppService } from './app.service';
 
 describe('AppController', () => {
-  let app: TestingModule;
+  let appController: AppController;
 
-  beforeAll(async () => {
-    app = await Test.createTestingModule({
+  beforeEach(async () => {
+    const moduleRef = await Test.createTestingModule({
       controllers: [AppController],
-      providers: [AppService],
+      imports: [DataModule, SocketsModule],
     }).compile();
+
+    console.log('!!!!!!!!  moduleRef ', moduleRef);
+    appController = moduleRef.get<AppController>(AppController);
   });
 
-  describe('getHello', () => {
-    it('should return "Hello World!"', () => {
-      const appController = app.get<AppController>(AppController);
-      expect(appController.getHello()).toBe('Hello World!');
+  describe('getStarships', () => {
+    it('return an array of starships"', () => {
+      expect(appController.getStarships()).toBe([]);
     });
   });
 });
