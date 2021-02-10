@@ -52,8 +52,6 @@ describe('DataService', () => {
 
   describe('createStarship ', () => {
     it('creates a starship', () => {
-      const ss1 = mockStarshipFactory('ss1', 'model1');
-
       const actual = dataService.createStarship({
         name: 'test',
         model: 'testmodel',
@@ -70,7 +68,6 @@ describe('DataService', () => {
 
   describe('createStarship ', () => {
     it('updates a starship', () => {
-      const ss1 = mockStarshipFactory('ss1', 'model1');
       const createdStarship = dataService.createStarship({
         name: 'test',
         model: 'testmodel',
