@@ -22,11 +22,11 @@ Prerequisites:
 
 1. Install all prerequisites
 2. Clone this repo
-3. Cd to root directory
+3. `cd` to root directory
 4. Install dependencies in both `/client` and `/server` by running `yarn` or `npm install` in each directory
 5. Start kafka in a new terminal window by running `docker-compose up` in `/docker`
    - port `9094` by default
 6. Start the server in a new terminal by running `yarn start` in `/server`
    - port `3001` by default, websocket on `4001`
-7. Start the client
+7. Start the client in a new terminal by running `yarn start` in `/client`
    - port `3000` by default

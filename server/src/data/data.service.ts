@@ -22,8 +22,9 @@ export enum ComponentStatus {
 }
 
 type Starships = Record<string, Starship>;
+
 /**
- * Note: Using as a non persistant mock datastore for holding starship records
+ * Mock datastore for holding starship records
  */
 @Injectable()
 export class DataService {

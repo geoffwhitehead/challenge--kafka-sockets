@@ -61,8 +61,6 @@ export class AppController {
   createStarship(@Body() body: Pick<Starship, 'name' | 'model'>) {
     const { model, name } = body;
 
-    const starshipsLength = this.dataService.getStarships().length;
-
     const starship = {
       model,
       name,
