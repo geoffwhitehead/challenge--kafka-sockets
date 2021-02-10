@@ -27,11 +27,9 @@ type Starships = Record<string, Starship>;
  */
 @Injectable()
 export class DataService {
-  private starships: Starships;
+  private starships: Starships = {};
 
-  constructor(starships: Starships = {}) {
-    this.starships = starships;
-  }
+  constructor() {}
 
   getStarships(): Starship[] {
     return Object.values(this.starships);

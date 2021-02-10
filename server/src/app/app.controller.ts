@@ -40,6 +40,11 @@ export class AppController {
 
     await this.kafkaClient.connect();
   }
+  @Get('starships/:id')
+  getStarship(@Param('id') id): Starship {
+    console.log('GET ', id);
+    return this.dataService.getStarship(id);
+  }
 
   @Get('starships')
   getStarships(): Starship[] {
@@ -53,7 +58,7 @@ export class AppController {
   }
 
   @Post('starships')
-  createStarship(@Body() body: Omit<Starship, 'id'>): Omit<Starship, 'id'> {
+  createStarship(@Body() body: Pick<Starship, 'name' | 'model'>) {
     const { model, name } = body;
 
     const starship = {
@@ -62,8 +67,6 @@ export class AppController {
     };
 
     this.kafkaClient.emit(KAFKA_EVENTS.EVENT_STARSHIP_CREATED, starship);
-
-    return starship;
   }
 
   @MessagePattern(
