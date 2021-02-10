@@ -1,10 +1,10 @@
 import { WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { appConfig } from 'config';
-import { SOCKET_EVENTS } from './consts';
-import { Starship } from './data/data.service';
+import { SOCKET_EVENTS } from '../consts';
+import { Starship } from '../data/data.service';
 
 @WebSocketGateway(appConfig.WS_PORT)
-export class AppGateway {
+export class SocketsGateway {
   @WebSocketServer() private server;
 
   onComponentCreated = (starship: Starship) =>

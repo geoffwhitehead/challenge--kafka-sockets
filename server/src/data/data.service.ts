@@ -21,14 +21,17 @@ export enum ComponentStatus {
   'complete' = 'complete',
 }
 
+type Starships = Record<string, Starship>;
 /**
  * Note: Using as a non persistant mock datastore for holding starship records
  */
 @Injectable()
 export class DataService {
-  private starships = {};
+  private starships: Starships;
 
-  constructor() {}
+  constructor(starships: Starships = {}) {
+    this.starships = starships;
+  }
 
   getStarships() {
     return this.starships;

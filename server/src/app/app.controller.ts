@@ -7,47 +7,49 @@ import {
   Param,
   Post,
 } from '@nestjs/common';
-import { ClientKafka, MessagePattern, Payload } from '@nestjs/microservices';
+import {
+  ClientKafka,
+  MessagePattern,
+  Payload,
+  Transport,
+} from '@nestjs/microservices';
+import { KAFKA_EVENTS, NAME_SERVICE_STARSHIP } from 'src/consts';
 import {
   ComponentStatus,
   DataService,
   Starship,
   StarshipComponent,
 } from 'src/data/data.service';
-import { AppGateway } from './app.gateway';
-import { KAFKA_EVENTS, NAME_SERVICE_STARSHIP } from './consts';
-import { EventsService } from './events/events.service';
-import { IncomingMessage } from './types';
+import { SocketsGateway } from '../sockets/sockets.gateway';
+import { IncomingMessage } from '../types';
 
 @Controller()
 export class AppController {
   constructor(
-    @Inject(NAME_SERVICE_STARSHIP) private client: ClientKafka,
-    private readonly starshipService: DataService,
-    private readonly appGateway: AppGateway,
-    private readonly kafkaService: EventsService,
+    @Inject(NAME_SERVICE_STARSHIP) private kafkaClient: ClientKafka,
+    private readonly dataService: DataService,
+    private readonly socketsGateway: SocketsGateway,
   ) {}
 
   async onModuleInit() {
     const events = Object.values(KAFKA_EVENTS);
 
     await events.forEach(async (event) => {
-      await this.client.subscribeToResponseOf(event);
+      await this.kafkaClient.subscribeToResponseOf(event);
     });
+
+    await this.kafkaClient.connect();
   }
 
-  /**
-   * Routes
-   */
   @Get('starships')
   getStarships(): Starship[] {
-    return Object.values(this.starshipService.getStarships());
+    return Object.values(this.dataService.getStarships());
   }
 
   @Delete('starships/:id')
   deleteStarship(@Param('id') id) {
-    this.starshipService.removeStarship(id);
-    this.appGateway.onStarshipDeleted(id);
+    this.dataService.removeStarship(id);
+    this.socketsGateway.onStarshipDeleted(id);
   }
 
   @Post('starships')
@@ -59,19 +61,15 @@ export class AppController {
       name,
     };
 
-    this.client.emit(KAFKA_EVENTS.EVENT_STARSHIP_CREATED, starship);
+    this.kafkaClient.emit(KAFKA_EVENTS.EVENT_STARSHIP_CREATED, starship);
+
     return starship;
   }
 
-  /**
-   * Event Handlers
-   */
-
-  /**
-   * Event Handler - part of the creation process for a starship
-   * @param payload Event
-   */
-  @MessagePattern(KAFKA_EVENTS.EVENT_STARSHIP_COMPONENT_CREATED)
+  @MessagePattern(
+    KAFKA_EVENTS.EVENT_STARSHIP_COMPONENT_CREATED,
+    Transport.KAFKA,
+  )
   StarshipComponentCreated(
     @Payload()
     payload: IncomingMessage<{
@@ -82,32 +80,32 @@ export class AppController {
     const { component, starshipId } = payload.value;
 
     setTimeout(() => {
-      const starship = this.starshipService.updateComponent(
+      const starship = this.dataService.updateComponent(
         starshipId,
         component,
         ComponentStatus.complete,
       );
 
       if (starship) {
-        this.appGateway.onComponentCreated(starship);
+        this.socketsGateway.onComponentCreated(starship);
       }
     }, 1000 * Math.random() * 10);
   }
 
-  @MessagePattern(KAFKA_EVENTS.EVENT_STARSHIP_CREATED)
+  @MessagePattern(KAFKA_EVENTS.EVENT_STARSHIP_CREATED, Transport.KAFKA)
   StarshipCreated(
     @Payload() payload: IncomingMessage<Omit<Starship, 'id'>>,
   ): any {
     const { name, model } = payload.value;
-    const starship = this.starshipService.createStarship({ name, model });
+    const starship = this.dataService.createStarship({ name, model });
 
     Object.keys(StarshipComponent).map((component) =>
-      this.client.emit(KAFKA_EVENTS.EVENT_STARSHIP_COMPONENT_CREATED, {
+      this.kafkaClient.emit(KAFKA_EVENTS.EVENT_STARSHIP_COMPONENT_CREATED, {
         component,
         starshipId: starship.id,
       }),
     );
 
-    this.appGateway.onStarshipCreated(starship);
+    this.socketsGateway.onStarshipCreated(starship);
   }
 }
