@@ -1,13 +1,15 @@
 type AppConfig = {
   host: string;
   port: number;
-  baseUrl: string;
-  socketUrl: string;
+  socketPort: number;
+  serverPort: number;
+  serverHost: string;
 };
 
 export const appConfig: AppConfig = {
   host: process.env.HOST || "localhost",
   port: parseInt(process.env.PORT || "3000"),
-  baseUrl: process.env.BASE_URL || "http://localhost:3001/",
-  socketUrl: process.env.SOCKET_URL || "http://localhost:4001/",
+  socketPort: parseInt(process.env.SOCKET_PORT || "4001"),
+  serverPort: parseInt(process.env.SERVER_PORT || "3001"),
+  serverHost: process.env.SERVER_HOST || "localhost",
 };

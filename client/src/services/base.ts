@@ -2,7 +2,7 @@ import axios from "axios";
 import { appConfig } from "../config";
 
 const apiClient = axios.create({
-  baseURL: appConfig.baseUrl,
+  baseURL: `http://${appConfig.serverHost}:${appConfig.serverPort}`,
 });
 
 const { get, post, put, delete: remove } = apiClient;

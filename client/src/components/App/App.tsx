@@ -30,10 +30,13 @@ const App: React.FC = () => {
     []
   );
 
+  console.log("appConfig ", appConfig);
   const [starships, setStarships] = useState<Starship[]>([]);
 
   useEffect((): any => {
-    const socket = socketIOClient(appConfig.socketUrl);
+    const socket = socketIOClient(
+      `http://${appConfig.serverHost}:${appConfig.socketPort}`
+    );
     socket.on("onCreate", (starship: Starship) => {
       setStarships([...starships, starship]);
     });
