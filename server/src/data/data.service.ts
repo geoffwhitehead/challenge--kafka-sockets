@@ -28,6 +28,7 @@ type Starships = Record<string, Starship>;
 @Injectable()
 export class DataService {
   private starships: Starships = {};
+  private maxStarships = 25;
 
   constructor() {}
 
@@ -39,9 +40,14 @@ export class DataService {
     return this.starships[id];
   }
 
-  createStarship(starship: Pick<Starship, 'model' | 'name'>): Starship {
+  createStarship(starship: Pick<Starship, 'model' | 'name'>): Starship | null {
     const { model, name } = starship;
     const id = uuidv4() as string;
+
+    if (Object.values(this.starships).length >= this.maxStarships) {
+      return null;
+    }
+
     const newStarship = {
       id,
       model,

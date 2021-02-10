@@ -4,56 +4,41 @@ import socketIOClient from "socket.io-client";
 import styled from "styled-components";
 import { appConfig } from "../../config";
 import { api, SwapiStarship } from "../../services/api";
-import { Table } from "./Table/Table";
+import { TableAvailableStarships } from "../TableAvailableStarships/TableAvailableStarships";
+import { TableStarships } from "../TableStarships/TableStarships";
+import { Title } from "../Title/Title";
+import { Starship } from "../types";
 
-export enum ComponentStatus {
-  "pending" = "pending",
-  "complete" = "complete",
-}
-export enum StarshipComponent {
-  engine = "engine",
-  hull = "hull",
-  weapons = "weapons",
-  navigation = "navigation",
-  interior = "interior",
-}
+const MAX_STARSHIPS = 25;
 
-export type Starship = {
-  model: string;
-  name: string;
-  id: string;
-  components: Record<StarshipComponent, ComponentStatus>;
-};
-
-const App: React.FC = () => {
+export const App: React.FC<{}> = ({}) => {
   const [availableStarships, setAvailableStarships] = useState<SwapiStarship[]>(
     []
   );
-
-  console.log("appConfig ", appConfig);
   const [starships, setStarships] = useState<Starship[]>([]);
 
   useEffect((): any => {
     const socket = socketIOClient(
       `http://${appConfig.serverHost}:${appConfig.socketPort}`
     );
-    socket.on("onCreate", (starship: Starship) => {
-      setStarships([...starships, starship]);
-    });
-    socket.on("onRemove", (starshipId: string) => {
-      setStarships(starships.filter((starship) => starship.id !== starshipId));
-    });
+
+    socket.on("onCreate", (starship: Starship) =>
+      setStarships([...starships, starship])
+    );
+    socket.on("onRemove", (starshipId: string) =>
+      setStarships(starships.filter((starship) => starship.id !== starshipId))
+    );
     socket.on("onComponentCreated", (starship: Starship) => {
       const index = findIndex(starships, { id: starship.id });
 
       if (index) {
-        let starshipsMutated = [...starships];
-        starshipsMutated.splice(index, 1, starship);
-        setStarships([...starshipsMutated]);
+        const temp = [...starships];
+        temp.splice(index, 1, starship);
+        setStarships([...temp]);
       }
     });
-    return () => socket.disconnect();
-  }, [starships, setStarships]);
+    return () => socket?.disconnect();
+  }, [starships]);
 
   useEffect(() => {
     (async () => {
@@ -74,115 +59,37 @@ const App: React.FC = () => {
 
   const handleRemove = (id: string) => api.remove(id);
 
-  const columnsAvailableStarships = React.useMemo(
-    () => [
-      {
-        Header: "Starship",
-        columns: [
-          {
-            Header: "Name",
-            accessor: "name",
-          },
-          {
-            Header: "Model",
-            accessor: "model",
-          },
-        ],
-      },
-      {
-        Header: "Details",
-        columns: [
-          {
-            Header: "Cost",
-            accessor: "cost_in_credits",
-          },
-          {
-            Header: "Crew",
-            accessor: "crew",
-          },
-          {
-            Header: "Passengers",
-            accessor: "passengers",
-          },
-          {
-            Header: "Class",
-            accessor: "starship_class",
-          },
-        ],
-      },
-    ],
-    []
-  );
-
-  const columnsStarships = React.useMemo(
-    () => [
-      {
-        Header: "Starship",
-        columns: [
-          {
-            Header: "Name",
-            accessor: "name",
-          },
-          {
-            Header: "Model",
-            accessor: "model",
-          },
-        ],
-      },
-      {
-        Header: "Build Progress",
-        columns: [
-          {
-            Header: "Engine",
-            accessor: "components.engine",
-          },
-          {
-            Header: "Hull",
-            accessor: "components.hull",
-          },
-          {
-            Header: "Navigation",
-            accessor: "components.navigation",
-          },
-          {
-            Header: "Weapons",
-            accessor: "components.weapons",
-          },
-          {
-            Header: "Interior",
-            accessor: "components.interior",
-          },
-        ],
-      },
-    ],
-    []
-  );
-
   return (
-    <StyledDiv>
-      <Table<SwapiStarship>
-        columns={columnsAvailableStarships}
-        data={availableStarships}
-        onClickRow={({ name, model }) => handleCreate({ name, model })}
-        buttonText="Create"
+    <Styles>
+      <Title
+        title="Starship Builder"
+        description="Build starships from the list of available starships. Building a starship takes some time. A websocket remains open to update the UI as the starship is being built."
       />
-      <Table<Starship>
-        columns={columnsStarships}
-        data={starships}
-        onClickRow={({ id }) => handleRemove(id)}
-        buttonText="Remove"
-      />
-    </StyledDiv>
+      <Flex>
+        <TableAvailableStarships
+          data={availableStarships}
+          onCreate={({ name, model }) => handleCreate({ name, model })}
+          isCreateDisabled={starships.length >= MAX_STARSHIPS}
+        />
+        <TableStarships
+          maxStarships={MAX_STARSHIPS}
+          data={starships}
+          onRemove={(id) => handleRemove(id)}
+        />
+      </Flex>
+    </Styles>
   );
 };
 
-const StyledDiv = styled.div`
+const Flex = styled.div`
   display: flex;
   flex-direction: row;
+`;
+
+const Styles = styled.div`
+  padding: 1rem;
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
     "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
 `;
-
-export default App;

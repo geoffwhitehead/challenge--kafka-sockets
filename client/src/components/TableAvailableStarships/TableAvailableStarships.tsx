@@ -1,20 +1,59 @@
 import React from "react";
-import { Column, useTable } from "react-table";
+import { useTable } from "react-table";
 import styled from "styled-components";
+import { SwapiStarship } from "../../services/api";
 
-export type TableProps<T extends {}> = {
-  columns: Column<T>[];
-  data: T[];
-  onClickRow?: (params: T) => void;
-  buttonText?: string;
+export type TableProps = {
+  data: SwapiStarship[];
+  onCreate: (starship: SwapiStarship) => void;
+  isCreateDisabled: boolean;
 };
 
-export function Table<T extends {}>({
-  columns,
+export const TableAvailableStarships: React.FC<TableProps> = ({
+  onCreate,
   data,
-  onClickRow,
-  buttonText,
-}: TableProps<T>): JSX.Element {
+  isCreateDisabled,
+}) => {
+  const columns = React.useMemo(
+    () => [
+      {
+        Header: "Starship",
+        columns: [
+          {
+            Header: "Name",
+            accessor: "name",
+          },
+          {
+            Header: "Model",
+            accessor: "model",
+          },
+        ],
+      },
+      {
+        Header: "Details",
+        columns: [
+          {
+            Header: "Cost",
+            accessor: "cost_in_credits",
+          },
+          {
+            Header: "Crew",
+            accessor: "crew",
+          },
+          {
+            Header: "Passengers",
+            accessor: "passengers",
+          },
+          {
+            Header: "Class",
+            accessor: "starship_class",
+          },
+        ],
+      },
+    ],
+    []
+  );
+
   const {
     getTableProps,
     getTableBodyProps,
@@ -35,7 +74,7 @@ export function Table<T extends {}>({
               {headerGroup.headers.map((column) => (
                 <th {...column.getHeaderProps()}>{column.render("Header")}</th>
               ))}
-              <th>Action</th>
+              <th></th>
             </tr>
           ))}
         </thead>
@@ -49,13 +88,13 @@ export function Table<T extends {}>({
                     <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
                   );
                 })}
-                {onClickRow && (
-                  <td>
-                    <button onClick={() => onClickRow(row.original)}>
-                      {buttonText}
-                    </button>
-                  </td>
-                )}
+                <td>
+                  <button
+                    onClick={() => !isCreateDisabled && onCreate(row.original)}
+                  >
+                    Create
+                  </button>
+                </td>
               </tr>
             );
           })}
@@ -63,7 +102,7 @@ export function Table<T extends {}>({
       </table>
     </Styles>
   );
-}
+};
 
 const Styles = styled.div`
   padding: 1rem;

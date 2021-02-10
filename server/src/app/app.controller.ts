@@ -61,6 +61,8 @@ export class AppController {
   createStarship(@Body() body: Pick<Starship, 'name' | 'model'>) {
     const { model, name } = body;
 
+    const starshipsLength = this.dataService.getStarships().length;
+
     const starship = {
       model,
       name,
@@ -102,13 +104,15 @@ export class AppController {
     const { name, model } = payload.value;
     const starship = this.dataService.createStarship({ name, model });
 
-    Object.keys(StarshipComponent).map((component) =>
-      this.kafkaClient.emit(KAFKA_EVENTS.EVENT_STARSHIP_COMPONENT_CREATED, {
-        component,
-        starshipId: starship.id,
-      }),
-    );
+    if (starship) {
+      Object.keys(StarshipComponent).map((component) =>
+        this.kafkaClient.emit(KAFKA_EVENTS.EVENT_STARSHIP_COMPONENT_CREATED, {
+          component,
+          starshipId: starship.id,
+        }),
+      );
 
-    this.socketsGateway.onStarshipCreated(starship);
+      this.socketsGateway.onStarshipCreated(starship);
+    }
   }
 }
