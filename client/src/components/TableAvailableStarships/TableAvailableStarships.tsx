@@ -1,5 +1,5 @@
 import React from "react";
-import { useTable } from "react-table";
+import { Column, useTable } from "react-table";
 import styled from "styled-components";
 import { SwapiStarship } from "../../services/api";
 
@@ -7,53 +7,15 @@ export type TableProps = {
   data: SwapiStarship[];
   onCreate: (starship: SwapiStarship) => void;
   isCreateDisabled: boolean;
+  columns: Column<SwapiStarship>[];
 };
 
 export const TableAvailableStarships: React.FC<TableProps> = ({
   onCreate,
   data,
   isCreateDisabled,
+  columns,
 }) => {
-  const columns = React.useMemo(
-    () => [
-      {
-        Header: "Starship",
-        columns: [
-          {
-            Header: "Name",
-            accessor: "name",
-          },
-          {
-            Header: "Model",
-            accessor: "model",
-          },
-        ],
-      },
-      {
-        Header: "Details",
-        columns: [
-          {
-            Header: "Cost",
-            accessor: "cost_in_credits",
-          },
-          {
-            Header: "Crew",
-            accessor: "crew",
-          },
-          {
-            Header: "Passengers",
-            accessor: "passengers",
-          },
-          {
-            Header: "Class",
-            accessor: "starship_class",
-          },
-        ],
-      },
-    ],
-    []
-  );
-
   const {
     getTableProps,
     getTableBodyProps,

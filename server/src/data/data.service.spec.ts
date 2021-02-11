@@ -1,52 +1,49 @@
-import { v4 as uuidv4 } from 'uuid';
 import {
   ComponentStatus,
   DataService,
-  Starship,
   StarshipComponent,
 } from './data.service';
-
-const mockStarshipFactory = (name: string, model: string): Starship => {
-  return {
-    id: uuidv4(),
-    name,
-    model,
-    components: Object.keys(StarshipComponent).reduce(
-      (acc, component) => ({ ...acc, [component]: ComponentStatus.pending }),
-      {} as Starship['components'],
-    ),
-  };
-};
 
 describe('DataService', () => {
   let dataService: DataService;
 
-  beforeEach(async () => {
+  beforeEach(() => {
     dataService = new DataService();
   });
 
   describe('getStarship', () => {
     it('returns matching starship', () => {
-      const ss1 = mockStarshipFactory('ss1', 'model1');
-      jest.spyOn(dataService, 'getStarship').mockImplementation(() => ss1);
-      expect(dataService.getStarship(ss1.id)).toBe(ss1);
+      const ss = dataService.createStarship({
+        name: 'test',
+        model: 'testmodel',
+      });
+
+      expect(ss.name).toEqual('test');
+
+      const actual = dataService.getStarship(ss.id);
+
+      expect(actual.id).toBe(ss.id);
     });
   });
 
   describe('getStarships ', () => {
     it('returns an array of starships', () => {
-      const ss1 = mockStarshipFactory('ss1', 'model1');
-      const ss2 = mockStarshipFactory('ss2', 'model2');
-      const expected = [ss1, ss2];
-      jest
-        .spyOn(dataService, 'getStarships')
-        .mockImplementation(() => expected);
+      const ss1 = dataService.createStarship({
+        name: 'test1',
+        model: 'testmodel1',
+      });
+
+      const ss2 = dataService.createStarship({
+        name: 'test2',
+        model: 'testmodel2',
+      });
+
+      expect(ss1.name).toEqual('test1');
+      expect(ss2.name).toEqual('test2');
 
       const actual = dataService.getStarships();
 
-      expected.map((starship) => {
-        expect(actual).toContainEqual(starship);
-      });
+      expect(actual).toEqual(expect.arrayContaining([ss1, ss2]));
     });
   });
 
@@ -66,7 +63,7 @@ describe('DataService', () => {
     });
   });
 
-  describe('createStarship ', () => {
+  describe('updateStarship ', () => {
     it('updates a starship', () => {
       const createdStarship = dataService.createStarship({
         name: 'test',

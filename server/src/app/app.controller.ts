@@ -34,15 +34,13 @@ export class AppController {
   async onModuleInit() {
     const events = Object.values(KAFKA_EVENTS);
 
-    await events.forEach(async (event) => {
-      await this.kafkaClient.subscribeToResponseOf(event);
-    });
+    events.forEach((event) => this.kafkaClient.subscribeToResponseOf(event));
 
     await this.kafkaClient.connect();
   }
+
   @Get('starships/:id')
-  getStarship(@Param('id') id): Starship {
-    console.log('GET ', id);
+  getStarship(@Param('id') id: string): Starship {
     return this.dataService.getStarship(id);
   }
 
@@ -52,7 +50,7 @@ export class AppController {
   }
 
   @Delete('starships/:id')
-  deleteStarship(@Param('id') id) {
+  deleteStarship(@Param('id') id: string) {
     this.dataService.removeStarship(id);
     this.socketsGateway.onStarshipDeleted(id);
   }

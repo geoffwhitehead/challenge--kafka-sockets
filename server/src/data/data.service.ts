@@ -23,6 +23,11 @@ export enum ComponentStatus {
 
 type Starships = Record<string, Starship>;
 
+const components = Object.keys(StarshipComponent).reduce(
+  (acc, component) => ({ ...acc, [component]: ComponentStatus.pending }),
+  {} as Starship['components'],
+);
+
 /**
  * Mock datastore for holding starship records
  */
@@ -37,13 +42,17 @@ export class DataService {
     return Object.values(this.starships);
   }
 
-  getStarship(id: string): Starship {
-    return this.starships[id];
+  getStarship(id: string): Starship | null {
+    const starship = this.starships[id];
+    if (!starship) {
+      return null;
+    }
+    return starship;
   }
 
   createStarship(starship: Pick<Starship, 'model' | 'name'>): Starship | null {
     const { model, name } = starship;
-    const id = uuidv4() as string;
+    const id = uuidv4();
 
     if (Object.values(this.starships).length >= this.maxStarships) {
       return null;
@@ -53,10 +62,7 @@ export class DataService {
       id,
       model,
       name,
-      components: Object.keys(StarshipComponent).reduce(
-        (acc, component) => ({ ...acc, [component]: ComponentStatus.pending }),
-        {} as Starship['components'],
-      ),
+      components,
     };
 
     this.starships = {
@@ -74,16 +80,18 @@ export class DataService {
   ): Starship | null {
     const starship = this.starships[starshipId];
 
-    if (starship) {
-      this.starships[starship.id] = {
-        ...starship,
-        components: {
-          ...starship.components,
-          [component]: status,
-        },
-      };
-      return this.starships[starship.id];
+    if (!starship) {
+      return null;
     }
+
+    this.starships[starship.id] = {
+      ...starship,
+      components: {
+        ...starship.components,
+        [component]: status,
+      },
+    };
+    return this.starships[starship.id];
   }
 
   removeStarship(id: string) {

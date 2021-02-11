@@ -1,6 +1,6 @@
 export enum ComponentStatus {
-  "pending" = "pending",
-  "complete" = "complete",
+  pending = "pending",
+  complete = "complete",
 }
 export enum StarshipComponent {
   engine = "engine",

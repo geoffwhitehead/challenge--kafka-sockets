@@ -1,5 +1,5 @@
 import React from "react";
-import { useTable } from "react-table";
+import { Column, useTable } from "react-table";
 import styled from "styled-components";
 import { ComponentStatus, Starship } from "../types";
 
@@ -7,57 +7,15 @@ type TableProps = {
   data: Starship[];
   onRemove: (id: string) => void;
   maxStarships: number;
+  columns: Column<Starship>[];
 };
 
 export const TableStarships: React.FC<TableProps> = ({
   maxStarships,
   data,
   onRemove,
+  columns,
 }) => {
-  const columns = React.useMemo(
-    () => [
-      {
-        Header: "Starship",
-        columns: [
-          {
-            Header: "Name",
-            accessor: "name",
-          },
-          {
-            Header: "Model",
-            accessor: "model",
-          },
-        ],
-      },
-      {
-        Header: "Build Progress",
-        columns: [
-          {
-            Header: "Engine",
-            accessor: "components.engine",
-          },
-          {
-            Header: "Hull",
-            accessor: "components.hull",
-          },
-          {
-            Header: "Navigation",
-            accessor: "components.navigation",
-          },
-          {
-            Header: "Weapons",
-            accessor: "components.weapons",
-          },
-          {
-            Header: "Interior",
-            accessor: "components.interior",
-          },
-        ],
-      },
-    ],
-    []
-  );
-
   const {
     getTableProps,
     getTableBodyProps,

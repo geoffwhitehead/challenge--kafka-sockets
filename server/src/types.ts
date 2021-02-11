@@ -21,7 +21,7 @@ export type IncomingMessage<T> = {
   size: number;
   attributes: number;
   offset: string;
-  key: any;
+  key: unknown;
   value: T;
-  headers: Record<string, any>;
+  headers: Record<string, unknown>;
 };
