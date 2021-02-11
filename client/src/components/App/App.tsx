@@ -6,7 +6,7 @@ import { appConfig } from '../../config';
 import { api, SwapiStarship } from '../../services/api';
 import { TableAvailableStarships } from '../TableAvailableStarships/TableAvailableStarships';
 import { TableStarships } from '../TableStarships/TableStarships';
-import { Title } from '../Title/Title';
+import { Heading } from '../Title/Heading';
 import { Starship } from '../types';
 
 const MAX_STARSHIPS = 25;
@@ -139,7 +139,7 @@ export const App: React.FC<{}> = ({}) => {
 
   return (
     <Styles>
-      <Title
+      <Heading
         title="Starship Builder"
         description="Build starships from the list of available starships. Building a starship takes some time. A websocket remains open to update the UI as the starship is being built."
       />

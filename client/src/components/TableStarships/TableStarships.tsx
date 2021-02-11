@@ -1,17 +1,17 @@
-import React from "react";
-import { Column, useTable } from "react-table";
-import styled from "styled-components";
-import { ComponentStatus, Starship } from "../types";
+import React from 'react';
+import { Column, useTable } from 'react-table';
+import styled from 'styled-components';
+import { ComponentStatus, Starship } from '../types';
 
 type TableProps = {
   data: Starship[];
   onRemove: (id: string) => void;
-  maxStarships: number;
+  maxStarships?: number;
   columns: Column<Starship>[];
 };
 
 export const TableStarships: React.FC<TableProps> = ({
-  maxStarships,
+  maxStarships = 25,
   data,
   onRemove,
   columns,
@@ -34,7 +34,7 @@ export const TableStarships: React.FC<TableProps> = ({
           {headerGroups.map((headerGroup) => (
             <tr {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map((column) => (
-                <th {...column.getHeaderProps()}>{column.render("Header")}</th>
+                <th {...column.getHeaderProps()}>{column.render('Header')}</th>
               ))}
               <th></th>
             </tr>
@@ -48,16 +48,16 @@ export const TableStarships: React.FC<TableProps> = ({
                 {row.cells.map((cell) => {
                   const className =
                     cell.value === ComponentStatus.pending
-                      ? "negative"
+                      ? 'negative'
                       : cell.value === ComponentStatus.complete
-                      ? "positive"
-                      : "";
+                      ? 'positive'
+                      : '';
 
                   const renderCell =
-                    cell.column?.parent?.Header !== "Build Progress";
+                    cell.column?.parent?.Header !== 'Build Progress';
                   return (
                     <td className={className} {...cell.getCellProps()}>
-                      {renderCell && cell.render("Cell")}
+                      {renderCell && cell.render('Cell')}
                     </td>
                   );
                 })}

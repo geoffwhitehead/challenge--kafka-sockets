@@ -1,12 +1,12 @@
-import React from "react";
-import { Column, useTable } from "react-table";
-import styled from "styled-components";
-import { SwapiStarship } from "../../services/api";
+import React from 'react';
+import { Column, useTable } from 'react-table';
+import styled from 'styled-components';
+import { SwapiStarship } from '../../services/api';
 
 export type TableProps = {
   data: SwapiStarship[];
   onCreate: (starship: SwapiStarship) => void;
-  isCreateDisabled: boolean;
+  isCreateDisabled?: boolean;
   columns: Column<SwapiStarship>[];
 };
 
@@ -34,7 +34,7 @@ export const TableAvailableStarships: React.FC<TableProps> = ({
           {headerGroups.map((headerGroup) => (
             <tr {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map((column) => (
-                <th {...column.getHeaderProps()}>{column.render("Header")}</th>
+                <th {...column.getHeaderProps()}>{column.render('Header')}</th>
               ))}
               <th></th>
             </tr>
@@ -47,7 +47,7 @@ export const TableAvailableStarships: React.FC<TableProps> = ({
               <tr {...row.getRowProps()}>
                 {row.cells.map((cell) => {
                   return (
-                    <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
+                    <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
                   );
                 })}
                 <td>
