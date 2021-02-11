@@ -1,5 +1,5 @@
-import axios from "axios";
-import { appConfig } from "../config";
+import axios from 'axios';
+import { appConfig } from '../config';
 
 const apiClient = axios.create({
   baseURL: `http://${appConfig.serverHost}:${appConfig.serverPort}`,

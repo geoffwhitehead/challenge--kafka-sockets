@@ -1,13 +1,13 @@
 export enum ComponentStatus {
-  pending = "pending",
-  complete = "complete",
+  pending = 'pending',
+  complete = 'complete',
 }
 export enum StarshipComponent {
-  engine = "engine",
-  hull = "hull",
-  weapons = "weapons",
-  navigation = "navigation",
-  interior = "interior",
+  engine = 'engine',
+  hull = 'hull',
+  weapons = 'weapons',
+  navigation = 'navigation',
+  interior = 'interior',
 }
 
 export type Starship = {
