@@ -1,24 +1,5 @@
 # Starship Kafka App
 
-## Challenge
-
-Build a micro-service (JSON API) that utilises a Kafka consumer and exposes a topic.
-The requirements are as follows:
-
- - Use the language of your choice
- - Use local Kafka
-   - [HINT] Docker compose
- - Create or mock a Kafka producer
-   - A TOPIC of your choice
- - Create a Kafka consumer to consume to topic
- - Expose a JSON API micro-service
- - Host the code on your own Github or similar
- - [BONUS] Manipulate the data in the micro-service
- - [BONUS] Write tests
- - [BONUS] Create docs ([HINT] OpenAPI or SWAGGER)
- - [BONUS] Host the service on the cloud
- - [BONUS] Build a simple client
-
 
 ## Description
 
